@@ -5,43 +5,9 @@ import SearchBar from "./components/SearchBar"
 import axios from "axios"
 import styled from "styled-components"
 
-const App = () => {
-  // Try to think through what state you'll need for this app before starting. Then build out
-  // the state properties here.
-
-  // Fetch characters from the API in an effect hook. Remember, anytime you have a 
-  // side effect in a component, you want to think about which state and/or props it should
-  // sync up with, if any.
-
-const [characters,setCharacters] = useState([])
-const [pageToShow, setPageToShow] = useState("https://swapi.dev/api/people/?page=1")
-const [searchText, setSearchText] = useState('')
-
-
-useEffect(() => {
-  if(searchText === '') {
-    axios.get(pageToShow)
-    .then(response => {
-      setCharacters(response.data)
-      console.log(response.data);
-    })
-    .catch(err => {
-      console.log(err);
-    })
-  } else {
-    axios.get(`https://swapi.dev/api/people/?search=${searchText}`)
-    .then(response => {
-      setCharacters(response.data)
-    })
-    .catch(err => {
-      console.log(err);
-    })
-  }
-  
-},[pageToShow, searchText])
 
 // styled-Components
-const App = styled.div`
+const AppDiv = styled.div`
     text-align: center;
 `
 const Characters = styled.div`
@@ -68,20 +34,55 @@ const Next = styled.button`
   margin-left: 20px
 `;
 
+const App = () => {
+  // Try to think through what state you'll need for this app before starting. Then build out
+  // the state properties here.
+
+  // Fetch characters from the API in an effect hook. Remember, anytime you have a 
+  // side effect in a component, you want to think about which state and/or props it should
+  // sync up with, if any.
+
+const [characters,setCharacters] = useState([])
+const [pageToShow, setPageToShow] = useState("https://swapi.dev/api/people/?page=1")
+const [searchText, setSearchText] = useState('')
+
+
+useEffect(() => {
+  if(searchText === '') {
+    axios.get(pageToShow)
+    .then(response => {
+      setCharacters(response.data)
+    })
+    .catch(err => {
+      console.log(err);
+    })
+  } else {
+    axios.get(`https://swapi.dev/api/people/?search=${searchText}`)
+    .then(response => {
+      setCharacters(response.data)
+    })
+    .catch(err => {
+      console.log(err);
+    })
+  }
+  
+},[pageToShow, searchText])
+
+
 
 if (characters.length !== 0) {
   return (
-    <App>
+    <AppDiv>
       <Characters>
         <SearchBar SetSearchText={setSearchText} SearchText={searchText}/>
         <Header>{(characters.previous !== null) ? <Last onClick={()=>{setPageToShow(characters.previous)}}>{`<<`}</Last> : ""} Characters {(characters.next !== null) ? <Next onClick={()=>{setPageToShow(characters.next)}}>{`>>`}</Next> : ""}</Header>
       {
           characters.results.map((el) => {
-            return <Character info={el} />
+            return <Character info={el} key={el.name}/>
         })
       }
     </Characters>
-    </App>
+    </AppDiv>
   )
 } else {
   return "...Loading"

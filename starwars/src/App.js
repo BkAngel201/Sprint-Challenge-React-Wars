@@ -1,6 +1,7 @@
 import React, { useState, useEffect} from 'react';
 import './App.css';
 import Character from "./components/Character"
+import SearchBar from "./components/SearchBar"
 import axios from "axios"
 import styled from "styled-components"
 
@@ -14,18 +15,30 @@ const App = () => {
 
 const [characters,setCharacters] = useState([])
 const [pageToShow, setPageToShow] = useState("https://swapi.dev/api/people/?page=1")
+const [searchText, setSearchText] = useState('')
 
 
 useEffect(() => {
-  axios.get(pageToShow)
-  .then(response => {
-    setCharacters(response.data)
-    console.log(response.data);
-  })
-  .catch(err => {
-    console.log(err);
-  })
-},[pageToShow])
+  if(searchText === '') {
+    axios.get(pageToShow)
+    .then(response => {
+      setCharacters(response.data)
+      console.log(response.data);
+    })
+    .catch(err => {
+      console.log(err);
+    })
+  } else {
+    axios.get(`https://swapi.dev/api/people/?search=${searchText}`)
+    .then(response => {
+      setCharacters(response.data)
+    })
+    .catch(err => {
+      console.log(err);
+    })
+  }
+  
+},[pageToShow, searchText])
 
 // styled-Components
 const App = styled.div`
@@ -35,6 +48,7 @@ const Characters = styled.div`
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
+    position: relative;
 `
 const Header = styled.h1`
   color: #443e3e;
@@ -55,13 +69,12 @@ const Next = styled.button`
 `;
 
 
-
-
 if (characters.length !== 0) {
   return (
     <App>
       <Characters>
-  <Header>{(characters.previous !== null) ? <Last onClick={()=>{setPageToShow(characters.previous)}}>{`<<`}</Last> : ""} Characters {(characters.next !== null) ? <Next onClick={()=>{setPageToShow(characters.next)}}>{`>>`}</Next> : ""}</Header>
+        <SearchBar SetSearchText={setSearchText} SearchText={searchText}/>
+        <Header>{(characters.previous !== null) ? <Last onClick={()=>{setPageToShow(characters.previous)}}>{`<<`}</Last> : ""} Characters {(characters.next !== null) ? <Next onClick={()=>{setPageToShow(characters.next)}}>{`>>`}</Next> : ""}</Header>
       {
           characters.results.map((el) => {
             return <Character info={el} />

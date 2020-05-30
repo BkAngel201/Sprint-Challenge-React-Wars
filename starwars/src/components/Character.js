@@ -23,6 +23,7 @@ const Gender = styled.span`
 `;
 const Paragraph = styled.p`
  margin-bottom: 5px;
+ text-transform: capitalize;
 `;
 
 
@@ -34,7 +35,7 @@ const Character = (props) => {
   return (
             <CharacterDiv>
                 <Name>{props.info.name}<Gender>({props.info.gender})</Gender></Name>
-                <Paragraph>Hair Color:{props.info.hair_color}</Paragraph>
+                <Paragraph>Hair Color: {props.info.hair_color}</Paragraph>
                 <Paragraph>Height: {props.info.height}</Paragraph>
                 <Paragraph>Mass: {props.info.mass}</Paragraph>
                 <Paragraph>Skin Color: {props.info.skin_color}</Paragraph>
